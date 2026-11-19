@@ -120,6 +120,7 @@ final sendTabVmProvider = ViewProvider((ref) {
     },
     onTapSendMode: (context, mode) async {
       if (mode == SendMode.link) {
+        await ref.notifier(settingsProvider).setSendMode(SendMode.link);
         var files = ref.read(selectedSendingFilesProvider);
         if (files.isEmpty) {
           await AddFileDialog.open(
