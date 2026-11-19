@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:localsend_app/model/send_mode.dart';
 import 'package:localsend_app/model/state/server/receive_session_state.dart';
 import 'package:localsend_app/model/state/server/receiving_file.dart';
 import 'package:localsend_app/pages/home_page.dart';
 import 'package:localsend_app/pages/home_page_controller.dart';
 import 'package:localsend_app/pages/progress_page.dart';
 import 'package:localsend_app/pages/receive_page.dart';
+import 'package:localsend_app/pages/web_share_page.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
 import 'package:localsend_app/provider/file_transfer_provider.dart';
@@ -36,6 +38,7 @@ import 'package:localsend_isolates/util/rust.dart';
 import 'package:localsend_isolates/util/transfer_notification.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:refena_flutter/addons.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:routerino/routerino.dart';
 import 'package:uuid/uuid.dart';
@@ -518,6 +521,13 @@ class ReceiveController {
     server.ref.redux(selectedSendingFilesProvider).dispatchAsyncTakeResult(LoadSelectionFromArgsAction(args)).then((filesAdded) {
       if (filesAdded) {
         server.ref.redux(homePageControllerProvider).dispatch(ChangeTabAction(HomeTab.send));
+        // 链接分享模式下直接打开网页分享页
+        if (server.ref.read(settingsProvider).sendMode == SendMode.link) {
+          final files = server.ref.read(selectedSendingFilesProvider);
+          if (files.isNotEmpty) {
+            server.ref.global.dispatch(NavigateAction.push(WebSharePage(files: files)));
+          }
+        }
       }
     });
   }
