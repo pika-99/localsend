@@ -167,6 +167,22 @@ class SendTab extends StatelessWidget {
                 ),
               ),
             ],
+            if (vm.sendMode == SendMode.link)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10, left: _horizontalPadding, right: _horizontalPadding),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    onPressed: () async => await vm.onTapSendMode(context, SendMode.link),
+                    icon: const Icon(Icons.link),
+                    label: Text(t.sendTab.sendModes.link),
+                  ),
+                ),
+              ),
             Row(
               children: [
                 const SizedBox(width: _horizontalPadding),
@@ -476,12 +492,17 @@ class _SendModeButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Visibility(
-                visible: false,
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                child: Icon(Icons.check_circle),
+              Consumer(
+                builder: (context, ref) {
+                  final sendMode = ref.watch(settingsProvider.select((s) => s.sendMode));
+                  return Visibility(
+                    visible: sendMode == SendMode.link,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: const Icon(Icons.check_circle),
+                  );
+                },
               ),
               const SizedBox(width: 10),
               Text(t.sendTab.sendModes.link),
