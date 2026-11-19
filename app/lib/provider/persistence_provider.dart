@@ -381,7 +381,7 @@ class PersistenceService {
   }
 
   bool getShareViaLinkAutoAccept() {
-    return _prefs.getBool(_shareViaLinkAutoAccept) ?? false;
+    return _prefs.getBool(_shareViaLinkAutoAccept) ?? true;
   }
 
   Future<void> setShareViaLinkAutoAccept(bool shareViaLinkAutoAccept) async {
@@ -389,7 +389,7 @@ class PersistenceService {
   }
 
   bool getReceiveViaLinkAutoAccept() {
-    return _prefs.getBool(_receiveViaLinkAutoAccept) ?? false;
+    return _prefs.getBool(_receiveViaLinkAutoAccept) ?? true;
   }
 
   Future<void> setReceiveViaLinkAutoAccept(bool receiveViaLinkAutoAccept) async {
@@ -502,7 +502,7 @@ class PersistenceService {
   }
 
   SendMode getSendMode() {
-    return SendMode.values.firstWhereOrNull((m) => m.name == _prefs.getString(_sendMode)) ?? SendMode.single;
+    return SendMode.values.firstWhereOrNull((m) => m.name == _prefs.getString(_sendMode)) ?? SendMode.link;
   }
 
   Future<void> setSendMode(SendMode mode) async {
