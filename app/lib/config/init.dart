@@ -10,7 +10,9 @@ import 'package:localsend_app/config/refena.dart';
 import 'package:localsend_app/config/theme.dart';
 import 'package:localsend_app/pages/home_page.dart';
 import 'package:localsend_app/pages/home_page_controller.dart';
+import 'package:localsend_app/pages/web_share_page.dart';
 import 'package:localsend_app/pages/whats_new_page.dart';
+import 'package:localsend_app/model/send_mode.dart';
 import 'package:localsend_app/provider/animation_provider.dart';
 import 'package:localsend_app/provider/app_arguments_provider.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
@@ -373,6 +375,13 @@ class _HandleAppStartArgumentsAction extends AsyncGlobalAction {
     final filesAdded = await ref.redux(selectedSendingFilesProvider).dispatchAsyncTakeResult(LoadSelectionFromArgsAction(args));
     if (filesAdded) {
       ref.redux(homePageControllerProvider).dispatch(ChangeTabAction(HomeTab.send));
+      // 链接分享模式下（右键"发送到 LocalSend"），直接进入网页分享页，跳过发送列表页
+      if (ref.read(settingsProvider).sendMode == SendMode.link) {
+        final files = ref.read(selectedSendingFilesProvider);
+        if (files.isNotEmpty) {
+          await ref.global.dispatchAsync(NavigateAction.push(WebSharePage(files: files)));
+        }
+      }
     }
   }
 }
